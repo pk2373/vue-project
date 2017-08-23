@@ -1,55 +1,71 @@
 <template>
-  <div>
-    <div class="content" >
-      <el-input name="用户名"   type="text"  :value="userName"  :disabled="disable" placeholder="请输入账号" />
-
-      <el-input name="密码" type="password" :value="password"  :disabled="disable" placeholder="请输入密码" />
-      <el-button type="primary"  :disabled="disable" @click="login">{{ button }}</el-button>
-    </div>
+  <div class="content" v-loading>
+    <el-form :model="ruleForm" :rules="rules" ref="ruleForm" label-width="0" class="">
+      <el-form-item label="" prop="username">
+        <el-input v-model="ruleForm.username" placeholder="请输入用户名"></el-input>
+      </el-form-item>
+      <el-form-item label="" prop="password">
+        <el-input v-model="ruleForm.password" type="password" placeholder="请输入密码"></el-input>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm('ruleForm')" style="display: block;margin: 0 auto;">登陆</el-button>
+        <!--<el-button @click="resetForm('ruleForm')">重置</el-button>-->
+      </el-form-item>
+    </el-form>
+    <div v-loading.fullscreen.lock="loading" element-loading-text="拼命加载中..."></div>
   </div>
 </template>
 
 <script>
-export default {
-  name: `logn`,
-  data () {
-    return {
-      button: `登陆`,
-      disable: false,
-      userName: ``,
-      password: ``
-    }
-  },
-  methods: {
-    login: function () {
-      this.button = `登陆中...`
-      this.disable = true
+  export default {
+    data () {
+      return {
+        loading: false,
+        ruleForm: {
+          username: '',
+          password: ''
+        },
+        rules: {
+          username: [
+            { required: true, message: '请输入用户名', trigger: 'blur' }
+          ],
+          password: [
+            { required: true, message: '请输入密码', trigger: 'blur' }
+          ]
+        }
+      }
+    },
+    methods: {
+      submitForm (formName) {
+        this.$refs[formName].validate((valid) => {
+          if (valid) {
+            this.loading = true
+          } else {
+            return
+          }
+        })
+      },
+      resetForm (formName) {
+        this.$refs[formName].resetFields()
+      }
     }
   }
-}
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
+
 <style scoped>
   .content{
     width: 300px;
     border: 1px solid #ccc;
-    position: absolute;
-    padding: 30px 0;
+    position: fixed!important;
+    padding: 30px 20px;
+    padding-bottom: 10px;
+    box-sizing: border-box;
     top: 50%;
-    margin-top: -100px;
+    margin-top: -108px;
     left: 50%;
     margin-left: -150px;
     border-radius: 10px;
-  }
-  .el-input{
-    width: 80%;
-    margin: 0 auto;
-    display: block;
-    margin-bottom: 20px;
-  }
-  .el-button{
-    margin: 0 auto;
-    display: block;
+    background: #fff;
   }
 </style>
